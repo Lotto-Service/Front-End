@@ -1,5 +1,11 @@
+'client';
+
+import SignIn from './SignIn';
+
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">main page</main>
+    <main className="min-h-screen border-2 border-black ">
+      <SignIn />
+    </main>
   );
 }
