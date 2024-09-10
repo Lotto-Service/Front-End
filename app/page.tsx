@@ -1,10 +1,10 @@
-'client';
+"client";
 
-import SignIn from './SignIn';
+import SignIn from "./SignIn";
 
 export default function Home() {
   return (
-    <main className="min-h-screen border-2 border-black bg-background">
+    <main className="min-h-[900px] bg-background">
       <SignIn />
     </main>
   );
