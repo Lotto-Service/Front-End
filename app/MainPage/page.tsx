@@ -10,7 +10,7 @@ import {
 import IMAGES from "@/utils/image";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 interface lottoType {
   title?: string;
@@ -33,9 +33,17 @@ export default function SignIn() {
 
   const checkNum = (index: number) => {
     const count = lottoNums.filter((v) => v).length;
-    if (count > 6) return;
     setLottoNums((prevState) =>
-      prevState.map((state, i) => (i === index ? !state : state))
+      prevState.map((state, i) => {
+        if (count >= 6) {
+          if (i === index && state) {
+            return !state;
+          }
+          return state;
+        } else {
+          return i === index ? !state : state;
+        }
+      })
     );
   };
 
@@ -44,13 +52,17 @@ export default function SignIn() {
   };
   const addLottoNums = () => {
     if (lottoMixtures.length > 5) return;
+    if (lottoNums.filter((v) => v).length === 6 && autoState) {
+      alert("자동과 수동이 동시에 선택됐습니다.");
+      return;
+    }
+
     for (let i = 0; i < count; i++) {
       const tempNums: number[] = [];
       lottoNums.forEach((v, i) => {
         v ? tempNums.push(i + 1) : null;
       });
       let title = "";
-      console.log("temp nums ", tempNums);
       if (autoState) {
         if (tempNums.length === 0) {
           title = "자동";
@@ -74,7 +86,16 @@ export default function SignIn() {
         { nums: tempNums, title },
       ]);
     }
-    console.log(lottoMixtures);
+  };
+  const resetLotto = () => {
+    setLottoNums((prevState) => prevState.map((state) => (state = false)));
+    setAutoState((prevState) => prevState === true && !prevState);
+  };
+
+  const removeLotto = (index: number) => {
+    let tmp = lottoMixtures;
+    tmp.splice(index, 1);
+    setLottoMixtures([...tmp]);
   };
   return (
     <div className="min-h-[900px] bg-background relative">
@@ -106,11 +127,7 @@ export default function SignIn() {
           <div className="flex justify-start">
             <Button
               className="bg-sub text-xl font-semibold px-8 hover:bg-sub-80"
-              onClick={() =>
-                setLottoNums((prevState) =>
-                  prevState.map((state) => (state = false))
-                )
-              }
+              onClick={resetLotto}
             >
               초기화
             </Button>
@@ -204,6 +221,8 @@ export default function SignIn() {
                     <Button
                       variant="delete"
                       className="border-delete border bg-white text-delete font-semibold"
+                      onClick={() => removeLotto(num)}
+                      disabled={!lottoMixtures[num]}
                     >
                       제거
                     </Button>
