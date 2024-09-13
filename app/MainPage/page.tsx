@@ -10,10 +10,9 @@ import {
 import IMAGES from "@/utils/image";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 interface lottoType {
-  id: string;
   title?: string;
   nums?: number[];
 }
@@ -22,15 +21,9 @@ export default function SignIn() {
   const [lottoNums, setLottoNums] = useState(
     Array.from({ length: 45 }, (_, i) => false)
   );
-  const [lottoMixtures, setLottoMixtures] = useState<lottoType[]>([
-    { id: "A" },
-    { id: "B" },
-    { id: "C" },
-    { id: "D" },
-    { id: "E" },
-  ]);
+  const [lottoMixtures, setLottoMixtures] = useState<lottoType[]>([]);
   const [autoState, setAutoState] = useState(false);
-  const [autoCount, setAutoCount] = useState(0);
+  const [count, setCount] = useState(1);
 
   const router = useRouter();
 
@@ -40,41 +33,74 @@ export default function SignIn() {
 
   const checkNum = (index: number) => {
     const count = lottoNums.filter((v) => v).length;
-    if (count >= 6) return;
     setLottoNums((prevState) =>
-      prevState.map((state, i) => (i === index ? !state : state))
+      prevState.map((state, i) => {
+        if (count >= 6) {
+          if (i === index && state) {
+            return !state;
+          }
+          return state;
+        } else {
+          return i === index ? !state : state;
+        }
+      })
     );
   };
 
-  const resetLotto = () => {
-    setLottoNums((prevState) => prevState.map((state) => (state = false)));
-  };
-
-  const setAutoLottoState = () => {
-    setAutoState(() => !autoState);
-  };
-
-  const selectLottoCount = (num: string) => {
-    console.log(num);
-  };
-
   const findSameNum = (arr: number[], n: number) => {
-    return Math.floor(Math.random() * 45 + 1);
+    return arr.find((v) => v === n);
   };
   const addLottoNums = () => {
-    if (autoState) {
-      const randomNums = [];
-
-      const num = Math.floor(Math.random() * 45 + 1);
-      randomNums.push(num);
-      findSameNum(randomNums, num);
-      console.log(randomNums);
+    if (lottoMixtures.length > 5) return;
+    if (lottoNums.filter((v) => v).length === 6 && autoState) {
+      alert("자동과 수동이 동시에 선택됐습니다.");
+      return;
     }
+
+    for (let i = 0; i < count; i++) {
+      const tempNums: number[] = [];
+      lottoNums.forEach((v, i) => {
+        v ? tempNums.push(i + 1) : null;
+      });
+      let title = "";
+      if (autoState) {
+        if (tempNums.length === 0) {
+          title = "자동";
+        } else {
+          title = "반자동";
+        }
+        while (tempNums.length < 6) {
+          const num = Math.floor(Math.random() * 45 + 1);
+
+          if (findSameNum(tempNums, num)) {
+            continue;
+          }
+          tempNums.push(num);
+        }
+      } else {
+        title = "수동";
+      }
+      tempNums.sort((a, b) => a - b);
+      setLottoMixtures((prevState) => [
+        ...prevState,
+        { nums: tempNums, title },
+      ]);
+    }
+  };
+  const resetLotto = () => {
+    setLottoNums((prevState) => prevState.map((state) => (state = false)));
+    setAutoState((prevState) => prevState === true && !prevState);
+  };
+
+  const removeLotto = (index: number) => {
+    let tmp = lottoMixtures;
+    tmp.splice(index, 1);
+    setLottoMixtures([...tmp]);
   };
   return (
     <div className="min-h-[900px] bg-background relative">
       <div className="border-b border-gray-400 w-full h-[100px] flex justify-center items-center fixed bg-white top-0">
-        <span className="font-bold text-4xl text-mainColor">제 1127회차</span>
+        <span className="font-bold text-4xl text-main">제 1127회차</span>
         <div className="flex fixed right-5">
           <Image
             className="mr-2"
@@ -84,7 +110,7 @@ export default function SignIn() {
             height={45}
           />
           <Button
-            className="mr-2 bg-mainColor font-bold px-5 hover:bg-mainColor40"
+            className="mr-2 bg-main font-bold px-5 hover:bg-main-40"
             onClick={logout}
           >
             로그아웃
@@ -93,14 +119,14 @@ export default function SignIn() {
       </div>
       <div className="w-full text-center mt-[120px]">
         <div>
-          <span className="font-semibold text-4xl text-grayColor">
+          <span className="font-semibold text-4xl text-sub2">
             로또 번호 추출
           </span>
         </div>
         <div className="w-[80%] m-auto mt-10">
           <div className="flex justify-start">
             <Button
-              className="bg-subColor text-xl font-semibold px-8 hover:bg-subColor80"
+              className="bg-sub text-xl font-semibold px-8 hover:bg-sub-80"
               onClick={resetLotto}
             >
               초기화
@@ -126,10 +152,9 @@ export default function SignIn() {
                   className={`w-1 
                     h-8 
                     rounded-full 
-                    ${v ? "bg-mainColor" : "bg-white"}
-                    border-mainColor 
+                    ${v ? "bg-main-40" : "bg-white border-main"}
                     border 
-                    hover:bg-mainColor`}
+                    hover:bg-main`}
                   onClick={() => checkNum(i)}
                 ></Button>
               </div>
@@ -138,11 +163,11 @@ export default function SignIn() {
         </div>
         <div className="w-[80%] m-auto mt-5 flex justify-between">
           <div className="flex">
-            <Select onValueChange={(val) => selectLottoCount(val)}>
-              <SelectTrigger className="w-[180px] border-mainColor text-mainColor font-semibold text-[20px]">
+            <Select onValueChange={(val) => setCount(+val)}>
+              <SelectTrigger className="w-[180px] border-main text-main font-semibold text-[20px]">
                 <SelectValue placeholder="1" />
               </SelectTrigger>
-              <SelectContent className="border-mainColor text-mainColor font-semibold text-center">
+              <SelectContent className="border-main text-main font-semibold text-center">
                 {Array.from({ length: 5 }, (_, i) => (
                   <SelectItem
                     key={i}
@@ -155,39 +180,38 @@ export default function SignIn() {
               </SelectContent>
             </Select>
             <Button
-              className={`w-[180px] ml-2 border-mainColor border ${
-                autoState
-                  ? "bg-mainColor text-white"
-                  : "bg-white text-mainColor"
-              } hover:bg-mainColor60 font-semibold text-[20px]`}
-              onClick={setAutoLottoState}
+              className={`w-[180px] ml-2 border-main border ${
+                autoState ? "bg-main text-white" : "bg-white text-main"
+              } hover:bg-main60 font-semibold text-[20px]`}
+              onClick={() => setAutoState(() => !autoState)}
             >
               자동
             </Button>
           </div>
           <div>
             <Button
-              className="w-[180px] bg-mainColor hover:bg-mainColor60 text-white font-semibold text-[20px]"
+              className="w-[180px] bg-main hover:bg-main-60 text-white font-semibold text-[20px]"
               onClick={addLottoNums}
             >
               확인
             </Button>
           </div>
         </div>
-        <div className="h-48 mt-20">
+        <div className="mt-20 mb-52">
           <div className="w-[80%] m-auto">
-            <hr className="border-grayColor border" />
+            <hr className="border-sub2 border" />
             <div className="my-10">
-              {lottoMixtures.map((mixture, i) => (
-                <div className="my-10" key={i}>
+              {Array.from({ length: 5 }, (_, index) => index).map((num) => (
+                <div className="my-10" key={num}>
                   <div className="flex justify-between w-[100%] items-center">
-                    <span className="w-[20%] text-[30px] text-mainColor text-left">
-                      {mixture.id} 자동
+                    <span className="w-[20%] text-[30px] text-main text-left">
+                      {String.fromCharCode(num + 65)}{" "}
+                      {lottoMixtures[num]?.title}
                     </span>
                     <div className="flex w-[70%] justify-around text-[30px]">
-                      {mixture.nums?.map((num, j) => (
+                      {lottoMixtures[num]?.nums?.map((num, j) => (
                         <span
-                          className="w-[50px] h-[50px] bg-mainColor20 flex justify-center items-center rounded-full"
+                          className="w-[50px] h-[50px] bg-main-20 flex justify-center items-center rounded-full"
                           key={j}
                         >
                           {num}
@@ -196,7 +220,9 @@ export default function SignIn() {
                     </div>
                     <Button
                       variant="delete"
-                      className="border-delColor border bg-white text-delColor font-semibold"
+                      className="border-delete border bg-white text-delete font-semibold"
+                      onClick={() => removeLotto(num)}
+                      disabled={!lottoMixtures[num]}
                     >
                       제거
                     </Button>
@@ -204,7 +230,7 @@ export default function SignIn() {
                 </div>
               ))}
             </div>
-            <hr className="border-grayColor border" />
+            <hr className="border-sub2 border" />
           </div>
         </div>
       </div>

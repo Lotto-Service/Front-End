@@ -1,5 +1,23 @@
 import type { Config } from "tailwindcss";
 
+// RGB 색상 문자열을 받아 투명도를 조합하여 rgba로 변환하는 함수
+function generateColorWithOpacity(hex: string, opacity: number) {
+  const r = parseInt(hex.slice(1, 3), 16); // 빨강
+  const g = parseInt(hex.slice(3, 5), 16); // 녹색
+  const b = parseInt(hex.slice(5, 7), 16); // 파랑
+
+  return `rgba(${r}, ${g}, ${b}, ${opacity / 100})`; // rgba 형식의 문자열 반환
+}
+
+// 기본 색상과 원하는 투명도를 사용하여 색상 팔레트를 생성하는 함수
+function generateColors(hex: string, opacities: number[]) {
+  const colors: Record<number, string> = {};
+  opacities.forEach((opacity) => {
+    colors[opacity] = generateColorWithOpacity(hex, opacity); // 각 투명도에 따른 색상 생성
+  });
+  return colors;
+}
+
 const config: Config = {
   darkMode: ["class"],
   content: [
@@ -20,18 +38,22 @@ const config: Config = {
         sm: "calc(var(--radius) - 4px)",
       },
       colors: {
-        delColor: "#FF8C8C",
-        mainColor: "#6868FF",
-        mainColor20: "#6868FF20",
-        mainColor40: "#6868FF40",
-        mainColor60: "#6868FF60",
-        mainColor80: "#6868FF80",
-        subColor: "#ABA5A5",
-        subColor20: "#ABA5A520",
-        subColor40: "#ABA5A540",
-        subColor60: "#ABA5A560",
-        subColor80: "#ABA5A580",
-        grayColor: "#808080",
+        delete: {
+          DEFAULT: "#FF8C8C",
+          ...generateColors("#FF8C8C", [20, 40, 60, 80]),
+        },
+        main: {
+          DEFAULT: "#6868FF",
+          ...generateColors("#6868FF", [20, 40, 60, 80]),
+        },
+        sub: {
+          DEFAULT: "#ABA5A5",
+          ...generateColors("#ABA5A5", [20, 40, 60, 80]),
+        },
+        sub2: {
+          DEFAULT: "#808080",
+          ...generateColors("#808080", [20, 40, 60, 80]),
+        },
         background: "#FFFFFF60",
         foreground: "hsl(var(--foreground))",
         card: {
