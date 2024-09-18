@@ -1,17 +1,32 @@
-"use client";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { useRouter } from "next/navigation";
+'use client';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { SignInForm } from '@/utils/type';
+import { useRouter } from 'next/navigation';
+import { useForm, SubmitHandler } from 'react-hook-form';
 
 export default function SignIn() {
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+    setError,
+    clearErrors,
+  } = useForm<SignInForm>();
+
   const router = useRouter();
 
   const toSignUp = () => {
-    router.push("/SignUp");
+    router.push('/SignUp');
+  };
+
+  const onSubmit: SubmitHandler<SignInForm> = (data) => {
+    console.log('data ', data);
   };
 
   const toMain = () => {
-    router.push("./MainPage");
+    router.push('./MainPage');
   };
   return (
     <div>
@@ -20,32 +35,36 @@ export default function SignIn() {
         <div className="text-center text-4xl font-bold text-main">로그인</div>
         <hr className="border border-main mt-5" />
         <div className="w-80 m-auto mt-10">
-          <Input
-            type="text"
-            className="border border-main w-full p-1 pl-2 rounded"
-            placeholder="아이디"
-          />
-          <Input
-            type="text"
-            className="mt-5 border border-main w-full p-1 pl-2 rounded"
-            placeholder="비밀번호"
-          />
-          <div className="mt-5 flex justify-between">
-            <Button
-              size={"lg"}
-              className="bg-sub text-white font-semibold text-base"
-              onClick={toSignUp}
-            >
-              회원가입
-            </Button>
-            <Button
-              size={"lg"}
-              className="bg-main text-white font-semibold text-base"
-              onClick={toMain}
-            >
-              로그인
-            </Button>
-          </div>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <Input
+              type="text"
+              className="border border-main w-full p-1 pl-2 rounded"
+              placeholder="아이디"
+              {...register('id', { required: true })}
+            />
+            <Input
+              type="password"
+              className="mt-5 border border-main w-full p-1 pl-2 rounded"
+              placeholder="비밀번호"
+              {...register('pw', { required: true })}
+            />
+            <div className="mt-5 flex justify-between">
+              <Button
+                size={'lg'}
+                className="bg-sub text-white font-semibold text-base"
+                onClick={toSignUp}
+              >
+                회원가입
+              </Button>
+              <Button
+                size={'lg'}
+                className="bg-main text-white font-semibold text-base"
+                type="submit"
+              >
+                로그인
+              </Button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
