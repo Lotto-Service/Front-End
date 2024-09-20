@@ -7,9 +7,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import IMAGES from "@/utils/image";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 interface lottoType {
@@ -24,12 +21,6 @@ export default function SignIn() {
   const [lottoMixtures, setLottoMixtures] = useState<lottoType[]>([]);
   const [autoState, setAutoState] = useState(false);
   const [count, setCount] = useState(1);
-
-  const router = useRouter();
-
-  const logout = () => {
-    router.push("/");
-  };
 
   const checkNum = (index: number) => {
     const count = lottoNums.filter((v) => v).length;
@@ -99,24 +90,6 @@ export default function SignIn() {
   };
   return (
     <div className="min-h-[900px] bg-background relative">
-      <div className="border-b border-gray-400 w-full h-[100px] flex justify-center items-center fixed bg-white top-0">
-        <span className="font-bold text-4xl text-main">제 1127회차</span>
-        <div className="flex fixed right-5">
-          <Image
-            className="mr-2"
-            src={IMAGES.USER}
-            alt=""
-            width={45}
-            height={45}
-          />
-          <Button
-            className="mr-2 bg-main font-bold px-5 hover:bg-main-40"
-            onClick={logout}
-          >
-            로그아웃
-          </Button>
-        </div>
-      </div>
       <div className="w-full text-center mt-[120px]">
         <div>
           <span className="font-semibold text-4xl text-sub2">
