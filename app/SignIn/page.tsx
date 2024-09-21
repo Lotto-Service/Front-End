@@ -1,9 +1,9 @@
-"use client";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { SignInForm } from "@/utils/type";
-import { useRouter } from "next/navigation";
-import { useForm, SubmitHandler } from "react-hook-form";
+'use client';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import useCommonRouter from '@/hook/useCommonRouter';
+import { SignInForm } from '@/utils/type';
+import { useForm, SubmitHandler } from 'react-hook-form';
 
 export default function SignIn() {
   const {
@@ -15,18 +15,18 @@ export default function SignIn() {
     clearErrors,
   } = useForm<SignInForm>();
 
-  const router = useRouter();
+  const router = useCommonRouter();
 
   const toSignUp = () => {
-    router.push("/SignUp");
+    router.toSignUp();
   };
 
   const onSubmit: SubmitHandler<SignInForm> = (data) => {
-    console.log("data ", data);
+    console.log('data ', data);
   };
 
   const toMain = () => {
-    router.push("./Main");
+    router.toMain();
   };
 
   return (
@@ -41,24 +41,25 @@ export default function SignIn() {
               type="text"
               className="border border-main w-full p-1 pl-2 rounded"
               placeholder="아이디"
-              {...register("id", { required: true })}
+              {...register('id', { required: true })}
             />
             <Input
               type="password"
               className="mt-5 border border-main w-full p-1 pl-2 rounded"
               placeholder="비밀번호"
-              {...register("pw", { required: true })}
+              {...register('pw', { required: true })}
             />
             <div className="mt-5 flex justify-between">
               <Button
-                size={"lg"}
+                size={'lg'}
                 className="bg-sub text-white font-semibold text-base"
                 onClick={toSignUp}
+                type="button"
               >
                 회원가입
               </Button>
               <Button
-                size={"lg"}
+                size={'lg'}
                 className="bg-main text-white font-semibold text-base"
                 // type="submit"
                 onClick={toMain}
