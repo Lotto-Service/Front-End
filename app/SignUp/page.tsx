@@ -2,8 +2,8 @@
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import useCommonRouter from '@/hook/useCommonRouter';
 import { SignUpForm } from '@/utils/type';
-import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 
@@ -55,10 +55,10 @@ export default function SignUp() {
     }
   };
 
-  const router = useRouter();
+  const router = useCommonRouter();
 
   const toHome = () => {
-    router.push('/');
+    router.toLogin();
   };
   return (
     <div className="min-h-[900px] bg-background">
@@ -115,6 +115,7 @@ export default function SignUp() {
                 size={'lg'}
                 className="bg-main text-white font-semibold text-base"
                 onClick={toHome}
+                type="button"
               >
                 취소
               </Button>
