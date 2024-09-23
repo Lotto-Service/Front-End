@@ -1,12 +1,13 @@
 export interface SignUpForm {
-  id: string;
-  pw: string;
+  username: string;
+  password: string;
   checkPw: string;
   email: string;
   birth: string;
+  phoneNumber?: string;
 }
 
 export interface SignInForm {
-  id: string;
-  pw: string;
+  username: string;
+  password: string;
 }
