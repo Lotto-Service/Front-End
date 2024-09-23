@@ -1,10 +1,11 @@
-"use client";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import useCommonRouter from "@/hook/useCommonRouter";
-import { SignInForm } from "@/utils/type";
-import axios from "axios";
-import { useForm, SubmitHandler } from "react-hook-form";
+'use client';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import useCommonRouter from '@/hook/useCommonRouter';
+import { SignInForm } from '@/utils/type';
+import axios from 'axios';
+import { signIn } from 'next-auth/react';
+import { useForm, SubmitHandler } from 'react-hook-form';
 
 export default function SignIn() {
   const {
@@ -22,8 +23,18 @@ export default function SignIn() {
     router.toSignUp();
   };
 
-  const onSubmit: SubmitHandler<SignInForm> = (data) => {
-    console.log("data ", data);
+  const onSubmit: SubmitHandler<SignInForm> = async (data) => {
+    console.log('data ', data);
+    const result = await signIn('credentials', {
+      username: data.username,
+      password: data.password,
+    });
+
+    if (result) {
+      console.log(result);
+    } else {
+      console.log('error ');
+    }
   };
 
   const toMain = () => {
@@ -42,17 +53,17 @@ export default function SignIn() {
               type="text"
               className="border border-main w-full p-1 pl-2 rounded"
               placeholder="아이디"
-              {...register("username", { required: true })}
+              {...register('username', { required: true })}
             />
             <Input
               type="password"
               className="mt-5 border border-main w-full p-1 pl-2 rounded"
               placeholder="비밀번호"
-              {...register("password", { required: true })}
+              {...register('password', { required: true })}
             />
             <div className="mt-5 flex justify-between">
               <Button
-                size={"lg"}
+                size={'lg'}
                 className="bg-sub text-white font-semibold text-base"
                 onClick={toSignUp}
                 type="button"
@@ -60,7 +71,7 @@ export default function SignIn() {
                 회원가입
               </Button>
               <Button
-                size={"lg"}
+                size={'lg'}
                 className="bg-main text-white font-semibold text-base"
                 type="submit"
                 // onClick={toMain}
