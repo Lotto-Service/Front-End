@@ -8,7 +8,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { useState } from 'react';
+import { getSession } from 'next-auth/react';
+import { useEffect, useState } from 'react';
 
 interface lottoType {
   title?: string;
@@ -20,6 +21,15 @@ export default function SignIn() {
   const [lottoMixtures, setLottoMixtures] = useState<lottoType[]>([]);
   const [autoState, setAutoState] = useState(false);
   const [count, setCount] = useState(1);
+
+  useEffect(() => {
+    getInfo();
+  }, []);
+
+  const getInfo = async () => {
+    const session = await getSession();
+    console.log('session ', session);
+  };
 
   const checkNum = (index: number) => {
     const count = lottoNums.filter((v) => v).length;
