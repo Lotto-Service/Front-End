@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import useCommonRouter from '@/hook/useCommonRouter';
 import { SignInForm } from '@/utils/type';
 import axios from 'axios';
-import { signIn } from 'next-auth/react';
+import { getSession, signIn, useSession } from 'next-auth/react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 
 export default function SignIn() {
@@ -24,23 +24,24 @@ export default function SignIn() {
   };
 
   const onSubmit: SubmitHandler<SignInForm> = async (data) => {
-    console.log('data ', data);
-    const result = await signIn('credentials', {
-      username: data.username,
-      password: data.password,
-    });
+    try {
+      const res = await signIn('credentials', {
+        username: data.username,
+        password: data.password,
+        redirect: false,
+        callbackUrl: '/Main',
+      });
 
-    if (result) {
-      console.log(result);
-    } else {
-      console.log('error ');
+      if (res?.error) {
+        return setError('username', { message: '아이디와 비밀번호가 틀렸음' });
+      }
+      if (res?.status === 200) {
+        router.toMain();
+      }
+    } catch (error) {
+      return setError('root', { message: '오류가 발생했습니다.' });
     }
   };
-
-  const toMain = () => {
-    router.toMain();
-  };
-
   return (
     <div>
       <div className="border-b border-gray-400 w-full min-h-20"></div>
