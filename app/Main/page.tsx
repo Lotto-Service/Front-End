@@ -1,15 +1,14 @@
-'use client';
-import RoundSelect from '@/components/RoundSelect';
-import { Button } from '@/components/ui/button';
+"use client";
+import RoundSelect from "@/components/RoundSelect";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { getSession } from 'next-auth/react';
-import { useEffect, useState } from 'react';
+} from "@/components/ui/select";
+import { useState } from "react";
 
 interface lottoType {
   title?: string;
@@ -17,19 +16,12 @@ interface lottoType {
 }
 
 export default function SignIn() {
-  const [lottoNums, setLottoNums] = useState(Array.from({ length: 45 }, (_, i) => false));
+  const [lottoNums, setLottoNums] = useState(
+    Array.from({ length: 45 }, (_, i) => false)
+  );
   const [lottoMixtures, setLottoMixtures] = useState<lottoType[]>([]);
   const [autoState, setAutoState] = useState(false);
   const [count, setCount] = useState(1);
-
-  useEffect(() => {
-    getInfo();
-  }, []);
-
-  const getInfo = async () => {
-    const session = await getSession();
-    console.log('session ', session);
-  };
 
   const checkNum = (index: number) => {
     const count = lottoNums.filter((v) => v).length;
@@ -43,7 +35,7 @@ export default function SignIn() {
         } else {
           return i === index ? !state : state;
         }
-      }),
+      })
     );
   };
 
@@ -53,7 +45,7 @@ export default function SignIn() {
   const addLottoNums = () => {
     if (lottoMixtures.length > 5) return;
     if (lottoNums.filter((v) => v).length === 6 && autoState) {
-      alert('자동과 수동이 동시에 선택됐습니다.');
+      alert("자동과 수동이 동시에 선택됐습니다.");
       return;
     }
 
@@ -62,12 +54,12 @@ export default function SignIn() {
       lottoNums.forEach((v, i) => {
         v ? tempNums.push(i + 1) : null;
       });
-      let title = '';
+      let title = "";
       if (autoState) {
         if (tempNums.length === 0) {
-          title = '자동';
+          title = "자동";
         } else {
-          title = '반자동';
+          title = "반자동";
         }
         while (tempNums.length < 6) {
           const num = Math.floor(Math.random() * 45 + 1);
@@ -78,10 +70,13 @@ export default function SignIn() {
           tempNums.push(num);
         }
       } else {
-        title = '수동';
+        title = "수동";
       }
       tempNums.sort((a, b) => a - b);
-      setLottoMixtures((prevState) => [...prevState, { nums: tempNums, title }]);
+      setLottoMixtures((prevState) => [
+        ...prevState,
+        { nums: tempNums, title },
+      ]);
     }
   };
   const resetLotto = () => {
@@ -101,7 +96,9 @@ export default function SignIn() {
       </div>
       <div className="w-full text-center mt-[50px]">
         <p className="font-bold text-4xl text-main">제 1127회차</p>
-        <p className="font-semibold text-4xl text-sub2 mt-[20px]">로또 번호 추출</p>
+        <p className="font-semibold text-4xl text-sub2 mt-[20px]">
+          로또 번호 추출
+        </p>
         <div className="w-[80%] m-auto mt-10">
           <div className="flex justify-start">
             <Button
@@ -131,7 +128,7 @@ export default function SignIn() {
                   className={`w-1 
                     h-8 
                     rounded-full 
-                    ${v ? 'bg-main-40' : 'bg-white border-main'}
+                    ${v ? "bg-main-40" : "bg-white border-main"}
                     border 
                     hover:bg-main`}
                   onClick={() => checkNum(i)}
@@ -148,7 +145,11 @@ export default function SignIn() {
               </SelectTrigger>
               <SelectContent className="border-main text-main font-semibold text-center">
                 {Array.from({ length: 5 }, (_, i) => (
-                  <SelectItem key={i} value={`${i + 1}`} className="text-[20px]">
+                  <SelectItem
+                    key={i}
+                    value={`${i + 1}`}
+                    className="text-[20px]"
+                  >
                     {i + 1}
                   </SelectItem>
                 ))}
@@ -156,7 +157,7 @@ export default function SignIn() {
             </Select>
             <Button
               className={`w-[180px] ml-2 border-main border ${
-                autoState ? 'bg-main text-white' : 'bg-white text-main'
+                autoState ? "bg-main text-white" : "bg-white text-main"
               } hover:bg-main60 font-semibold text-[20px]`}
               onClick={() => setAutoState(() => !autoState)}
             >
@@ -180,7 +181,8 @@ export default function SignIn() {
                 <div className="my-10" key={num}>
                   <div className="flex justify-between w-[100%] items-center">
                     <span className="w-[20%] text-[30px] text-main text-left">
-                      {String.fromCharCode(num + 65)} {lottoMixtures[num]?.title}
+                      {String.fromCharCode(num + 65)}{" "}
+                      {lottoMixtures[num]?.title}
                     </span>
                     <div className="flex w-[70%] justify-around text-[30px]">
                       {lottoMixtures[num]?.nums?.map((num, j) => (

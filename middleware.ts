@@ -1,6 +1,6 @@
-import { NextResponse } from 'next/server';
-import { PRIVATE_ROUTE, PUBLIC_ROUTE } from './route';
-import { withAuth } from 'next-auth/middleware';
+import { NextResponse } from "next/server";
+import { PRIVATE_ROUTE, PUBLIC_ROUTE } from "./route";
+import { withAuth } from "next-auth/middleware";
 
 export default withAuth(
   async function middleware(req) {
@@ -9,14 +9,18 @@ export default withAuth(
     const { pathname } = req.nextUrl;
     if (token) {
       if (PUBLIC_ROUTE.includes(pathname)) {
-        if (pathname.startsWith('/') || pathname.startsWith('/signUp')) {
-          return NextResponse.redirect(new URL('/Main', req.url));
+        if (pathname.startsWith("/") || pathname.startsWith("/signUp")) {
+          return NextResponse.redirect(new URL("/Main", req.url));
         }
+      }
+    } else {
+      if (pathname !== "/" && pathname !== "/signUp") {
+        return NextResponse.redirect(new URL("/", req.url));
       }
     }
 
     if (PRIVATE_ROUTE.includes(pathname)) {
-      return NextResponse.redirect(new URL('/', req.url));
+      return NextResponse.redirect(new URL("/", req.url));
     }
 
     return NextResponse.next();
@@ -27,7 +31,9 @@ export default withAuth(
         return true;
       },
     },
-  },
+  }
 );
 
-export const config = { matcher: ['/((?!.+\\.[\\w]+$|_next).*)', '/', '/(api|trpc)(.*)'] };
+export const config = {
+  matcher: ["/((?!.+\\.[\\w]+$|_next).*)", "/", "/(api|trpc)(.*)"],
+};

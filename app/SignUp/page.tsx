@@ -2,12 +2,12 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import useCommonRouter from "@/hook/useCommonRouter";
-import { SignUpForm } from "@/utils/type";
+import useCommonRouter from "@/hooks/useCommonRouter";
+import { SignUpType } from "@/utils/type";
 import { useEffect } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
-import * as AlertDialogPrimitive from "@radix-ui/react-alert-dialog";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/hooks/useToast";
+import axios from "axios";
 
 export default function SignUp() {
   const {
@@ -17,15 +17,14 @@ export default function SignUp() {
     formState: { errors },
     setError,
     clearErrors,
-  } = useForm<SignUpForm>();
+  } = useForm<SignUpType>();
   const { toast } = useToast();
+  const router = useCommonRouter();
 
   const pw = watch("password");
   const checkPw = watch("checkPw");
 
   useEffect(() => {
-    AlertDialogPrimitive.Trigger;
-
     if (pw && checkPw && pw !== checkPw) {
       setError("checkPw", { message: "비밀번호가 불일치합니다." });
     } else {
@@ -33,18 +32,26 @@ export default function SignUp() {
     }
   }, [pw, checkPw]);
 
-  const onSubmit: SubmitHandler<SignUpForm> = (data) => {
+  const onSubmit: SubmitHandler<SignUpType> = async (data) => {
     const birthRegex =
       /^(19[0-9][0-9]|20[0-9][0-9])(0[0-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])$/;
     const idRegex = /^[a-z]+[a-z0-9]{5,19}$/;
     const emailRegex =
       /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/i;
+    const phoneRegex = /^(01[016789]{1})[0-9]{3,4}[0-9]{4}$/;
 
     if (!birthRegex.test(data.birth)) {
       setError("birth", {
         message: "생년월일을 제대로 입력해주세요.(ex) 20001010",
       });
+      return;
     } else {
+      data.birth =
+        data.birth.slice(0, 4) +
+        "-" +
+        data.birth.slice(4, 6) +
+        "-" +
+        data.birth.slice(6, 8);
       clearErrors("birth");
     }
 
@@ -53,6 +60,7 @@ export default function SignUp() {
         message:
           "아이디를 제대로 입력해주세요.(영어 소문자로 시작, 특수문자 제외)",
       });
+      return;
     } else {
       clearErrors("username");
     }
@@ -61,18 +69,62 @@ export default function SignUp() {
       setError("email", {
         message: "이메일을 제대로 입력해주세요.(ex) id@naver.com",
       });
+      return;
     } else {
       clearErrors("email");
     }
+
+    if (!phoneRegex.test(data.phoneNumber)) {
+      setError("phoneNumber", {
+        message: "전화번호를 제대로 입력해주세요.",
+      });
+      return;
+    } else {
+      data.phoneNumber =
+        data.phoneNumber.slice(0, 3) +
+        "-" +
+        data.phoneNumber.slice(3, 7) +
+        "-" +
+        data.phoneNumber.slice(7, 11);
+      clearErrors("phoneNumber");
+    }
+
+    const params = {
+      username: data.username,
+      password: data.password,
+      email: data.email,
+      birth: data.birth,
+      phoneNumber: data.phoneNumber,
+    };
+
+    try {
+      const res = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/users`,
+        params
+      );
+      console.log("res", res.status);
+      if (res) {
+        toast({
+          title: "Success!",
+          variant: "success",
+        });
+        router.toLogin();
+      }
+    } catch (err: any) {
+      if (err.response.data.status === "CONFLICT") {
+        setError("phoneNumber", {
+          message: err?.response.data.message,
+        });
+      } else {
+        toast({
+          title: "문제가 발생했습니다. 관리자에게 문의해주세요.",
+          variant: "destructive",
+        });
+      }
+    }
   };
 
-  const router = useCommonRouter();
-
   const toHome = () => {
-    toast({
-      title: "Success!",
-      variant: "success",
-    });
     router.toLogin();
   };
   return (
@@ -125,6 +177,15 @@ export default function SignUp() {
             />
             {errors.birth && (
               <span className="error-text">{errors.birth.message}</span>
+            )}
+            <Input
+              type="text"
+              className="mt-5 border border-main w-full p-1 pl-2 rounded"
+              placeholder="휴대폰번호"
+              {...register("phoneNumber", { required: true })}
+            />
+            {errors.phoneNumber && (
+              <span className="error-text">{errors.phoneNumber.message}</span>
             )}
             <div className="mt-5 flex justify-between">
               <Button
