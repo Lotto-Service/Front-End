@@ -1,16 +1,26 @@
-'use client';
-import React, { Fragment, useState } from 'react';
-import { Button } from '@/components/ui/button';
-import Image from 'next/image';
-import IMAGES from '@/utils/image';
-import useCommonRouter from '@/hook/useCommonRouter';
+"use client";
+import React, { Fragment, useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import Image from "next/image";
+import IMAGES from "@/utils/image";
+import useCommonRouter from "@/hooks/useCommonRouter";
+import { signOut, useSession } from "next-auth/react";
 
 export default function Navbar() {
   const [login, setLogin] = useState(false);
   const router = useCommonRouter();
+  const { data } = useSession();
+
+  useEffect(() => {
+    if (data?.accessToken) {
+      setLogin(true);
+    } else {
+      setLogin(false);
+    }
+  }, [data]);
 
   const logout = () => {
-    router.toLogin();
+    signOut();
   };
 
   const toMain = () => {
@@ -23,7 +33,7 @@ export default function Navbar() {
 
   return (
     <div className="border-b border-gray-400 w-full h-[100px] flex justify-center items-center fixed bg-white top-0 z-10">
-      {login ? null : (
+      {login ? (
         <Fragment>
           <div className="flex fixed right-5 items-center">
             <div>
@@ -40,13 +50,22 @@ export default function Navbar() {
                 내 번호 조회
               </Button>
             </div>
-            <Image className="mr-2" src={IMAGES.USER} alt="" width={45} height={45} />
-            <Button className="mr-2 bg-main font-bold px-5 hover:bg-main-40" onClick={logout}>
+            <Image
+              className="mr-2"
+              src={IMAGES.USER}
+              alt=""
+              width={45}
+              height={45}
+            />
+            <Button
+              className="mr-2 bg-main font-bold px-5 hover:bg-main-40"
+              onClick={logout}
+            >
               로그아웃
             </Button>
           </div>
         </Fragment>
-      )}
+      ) : null}
     </div>
   );
 }
