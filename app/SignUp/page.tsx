@@ -6,6 +6,8 @@ import useCommonRouter from "@/hook/useCommonRouter";
 import { SignUpForm } from "@/utils/type";
 import { useEffect } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
+import * as AlertDialogPrimitive from "@radix-ui/react-alert-dialog";
+import { useToast } from "@/hooks/use-toast";
 
 export default function SignUp() {
   const {
@@ -16,11 +18,14 @@ export default function SignUp() {
     setError,
     clearErrors,
   } = useForm<SignUpForm>();
+  const { toast } = useToast();
 
   const pw = watch("password");
   const checkPw = watch("checkPw");
 
   useEffect(() => {
+    AlertDialogPrimitive.Trigger;
+
     if (pw && checkPw && pw !== checkPw) {
       setError("checkPw", { message: "비밀번호가 불일치합니다." });
     } else {
@@ -64,6 +69,10 @@ export default function SignUp() {
   const router = useCommonRouter();
 
   const toHome = () => {
+    toast({
+      title: "Success!",
+      variant: "success",
+    });
     router.toLogin();
   };
   return (
@@ -72,7 +81,7 @@ export default function SignUp() {
       <div className="max-w-96 min-h-80 m-auto mt-60 ">
         <div className="text-center text-4xl font-bold text-main">회원가입</div>
         <hr className="border border-main mt-5" />
-        <div className="w-80 m-auto mt-10">
+        <div className="w-80 m-auto mt-10 ">
           <form onSubmit={handleSubmit(onSubmit)}>
             <Input
               type="text"
