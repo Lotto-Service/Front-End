@@ -8,6 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { toast } from "@/hooks/useToast";
 import { useState } from "react";
 
 interface lottoType {
@@ -43,9 +44,15 @@ export default function SignIn() {
     return arr.find((v) => v === n);
   };
   const addLottoNums = () => {
+    if (lottoNums.filter((v) => v).length < 6 && !autoState) {
+      return;
+    }
     if (lottoMixtures.length > 5) return;
     if (lottoNums.filter((v) => v).length === 6 && autoState) {
-      alert("자동과 수동이 동시에 선택됐습니다.");
+      toast({
+        title: "자동과 수동이 동시에 선택됐습니다.",
+        variant: "destructive",
+      });
       return;
     }
 
