@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { PRIVATE_ROUTE, PUBLIC_ROUTE } from "./route";
+import { PAGE_ROUTE, PRIVATE_ROUTE, PUBLIC_ROUTE } from "./route";
 import { withAuth } from "next-auth/middleware";
 
 export default withAuth(
@@ -8,19 +8,13 @@ export default withAuth(
 
     const { pathname } = req.nextUrl;
     if (token) {
-      if (PUBLIC_ROUTE.includes(pathname)) {
-        if (pathname.startsWith("/") || pathname.startsWith("/signUp")) {
-          return NextResponse.redirect(new URL("/Main", req.url));
-        }
+      if (PUBLIC_ROUTE.includes(pathname) || !PAGE_ROUTE.includes(pathname)) {
+        return NextResponse.redirect(new URL("/Main", req.url));
       }
     } else {
-      if (pathname !== "/" && pathname !== "/signUp") {
+      if (!PUBLIC_ROUTE.includes(pathname)) {
         return NextResponse.redirect(new URL("/", req.url));
       }
-    }
-
-    if (PRIVATE_ROUTE.includes(pathname)) {
-      return NextResponse.redirect(new URL("/", req.url));
     }
 
     return NextResponse.next();
