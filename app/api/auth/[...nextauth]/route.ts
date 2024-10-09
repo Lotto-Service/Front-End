@@ -1,30 +1,34 @@
-import axios from "axios";
-import NextAuth, { NextAuthOptions, Session } from "next-auth";
-import { JWT } from "next-auth/jwt";
-import Credentials from "next-auth/providers/credentials";
+import axios from 'axios';
+import NextAuth, { NextAuthOptions, Session } from 'next-auth';
+import { JWT } from 'next-auth/jwt';
+import Credentials from 'next-auth/providers/credentials';
+import UserApi from '../../User/UserApi';
+
+const { userLogin } = UserApi;
 
 export const nextAuthOptions: NextAuthOptions = {
   providers: [
     Credentials({
-      type: "credentials",
+      type: 'credentials',
       credentials: {
-        username: { type: "username" },
-        password: { type: "password" },
+        username: { type: 'username' },
+        password: { type: 'password' },
       },
       async authorize(credentials, req) {
-        console.log("계정 정보 ", credentials?.username, credentials?.password);
+        console.log('계정 정보 ', credentials?.username, credentials?.password);
         try {
+          const params = {
+            username: credentials?.username || '',
+            password: credentials?.password,
+          };
           const res = await axios.post(
             `${process.env.NEXT_PUBLIC_API_URL}/users/authenticate`,
-            {
-              username: credentials?.username,
-              password: credentials?.password,
-            }
+            params,
           );
           return res.data;
         } catch (error) {
           if (axios.isAxiosError(error)) {
-            console.log("error ", error.response?.data);
+            console.log('error ', error.response?.data);
 
             const message = Object.values(error.response?.data)[0] as string;
             throw new Error(message);
@@ -46,8 +50,8 @@ export const nextAuthOptions: NextAuthOptions = {
         return session;
       }
 
-      console.log("session ==>> ", session);
-      console.log("token ==> ", token);
+      console.log('session ==>> ', session);
+      console.log('token ==> ', token);
       session.accessToken = token.data?.accessToken;
       session.refreshToken = token.data?.refreshToken;
       session.accessTokenExpires = token.expires;
@@ -89,7 +93,7 @@ export const nextAuthOptions: NextAuthOptions = {
     },
   },
   session: {
-    strategy: "jwt",
+    strategy: 'jwt',
     maxAge: 5 * 60 * 60 * 30,
   },
   events: {
@@ -103,9 +107,9 @@ export const nextAuthOptions: NextAuthOptions = {
     async session(message) {},
   },
   pages: {
-    signIn: "/",
+    signIn: '/',
   },
-  debug: process.env.NODE_ENV === "development",
+  debug: process.env.NODE_ENV === 'development',
 };
 
 const handler = NextAuth(nextAuthOptions);

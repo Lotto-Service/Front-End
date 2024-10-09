@@ -1,7 +1,7 @@
 export interface SignUpType {
   username: string;
   password: string;
-  checkPw: string;
+  checkPw?: string;
   email: string;
   birth: string;
   phoneNumber: string;
