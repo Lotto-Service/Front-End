@@ -24,27 +24,25 @@ export default function SignIn() {
   };
 
   const onSubmit: SubmitHandler<SignInType> = async (data) => {
-    try {
-      const res = await signIn("credentials", {
-        username: data.username,
-        password: data.password,
-        redirect: false,
-        callbackUrl: "/Main",
-      });
+    const res = await signIn("credentials", {
+      username: data.username,
+      password: data.password,
+      redirect: false,
+    });
 
-      if (res?.error) {
-        return setError("username", { message: "아이디와 비밀번호가 틀렸음" });
-      }
-      if (res?.status === 200) {
-        toast({
-          title: "Success!",
-          variant: "success",
-        });
-        router.toMain();
-      }
-    } catch (error) {
-      console.log("err ", error);
-      return setError("username", { message: "오류가 발생했습니다." });
+    if (res?.error) {
+      toast({
+        title: res.error,
+        variant: "destructive",
+      });
+      return;
+    }
+    if (res?.status === 200) {
+      toast({
+        title: "Success!",
+        variant: "success",
+      });
+      router.toMain();
     }
   };
   return (

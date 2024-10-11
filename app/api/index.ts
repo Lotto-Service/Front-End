@@ -1,5 +1,5 @@
-import axios from 'axios';
-import { useSession } from 'next-auth/react';
+import { CommonApiType } from "@/utils/type";
+import axios from "axios";
 
 const NEXT_PUBLIC_API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -7,7 +7,10 @@ export const instance = axios.create({
   baseURL: NEXT_PUBLIC_API_URL,
 });
 
-export const get = async ({ url = '', params = {}, headers = {}, token = '' }) => {
+export const get = async (props: CommonApiType) => {
+  const { url = "", token = "", headers = {}, params = {} } = props;
+  console.log("prama  ,,,,, ", props);
+  console.log(url, token);
   try {
     const result = await instance.get(url, {
       params,
@@ -17,7 +20,7 @@ export const get = async ({ url = '', params = {}, headers = {}, token = '' }) =
       },
     });
     const res = result;
-    console.log('get res ===>> ', res);
+    // console.log("get res ===>> ", res);
     return res;
   } catch (err) {
     console.log(err);
@@ -25,7 +28,9 @@ export const get = async ({ url = '', params = {}, headers = {}, token = '' }) =
   }
 };
 
-export const post = async ({ url = '', body = {}, params = {}, headers = {}, token = '' }) => {
+export const post = async (props: CommonApiType) => {
+  const { url = "", body = {}, token = "", headers = {}, params = {} } = props;
+
   try {
     const result = await instance.post(url, body, {
       ...params,
@@ -35,7 +40,7 @@ export const post = async ({ url = '', body = {}, params = {}, headers = {}, tok
       },
     });
     const res = result;
-    console.log('post res ===> ', res);
+    console.log("post res ===> ", res);
     return res;
   } catch (err) {
     console.log(err);
@@ -43,7 +48,9 @@ export const post = async ({ url = '', body = {}, params = {}, headers = {}, tok
   }
 };
 
-export const patch = async ({ url = '', body = {}, params = {}, headers = {}, token = '' }) => {
+export const patch = async (props: CommonApiType) => {
+  const { url = "", body = {}, token = "", headers = {}, params = {} } = props;
+
   try {
     const result = await instance.patch(url, body, {
       ...params,
@@ -53,7 +60,7 @@ export const patch = async ({ url = '', body = {}, params = {}, headers = {}, to
       },
     });
     const res = result;
-    console.log('patch res ===> ', res);
+    console.log("patch res ===> ", res);
 
     return res;
   } catch (e) {
@@ -62,17 +69,19 @@ export const patch = async ({ url = '', body = {}, params = {}, headers = {}, to
   }
 };
 
-export const put = async ({ url = '', body = {}, params = {}, headers = {} }) => {
+export const put = async (props: CommonApiType) => {
+  const { url = "", body = {}, token = "", headers = {}, params = {} } = props;
+
   try {
     const result = await instance.put(url, body, {
       ...params,
       headers: {
-        Authorization: `Bearer ${useSession().data?.accessToken}`,
+        Authorization: `Bearer ${token}`,
         ...headers,
       },
     });
     const res = result;
-    console.log('put res ===> ', res);
+    console.log("put res ===> ", res);
 
     return res;
   } catch (e) {
@@ -81,17 +90,19 @@ export const put = async ({ url = '', body = {}, params = {}, headers = {} }) =>
   }
 };
 
-export const remove = async ({ url = '', params = {}, headers = {} }) => {
+export const remove = async (props: CommonApiType) => {
+  const { url = "", token = "", headers = {}, params = {} } = props;
+
   try {
     const result = await instance.delete(url, {
       ...params,
       headers: {
-        Authorization: `Bearer ${useSession().data?.accessToken}`,
+        Authorization: `Bearer ${token}`,
         ...headers,
       },
     });
     const res = result;
-    console.log('remove res ===> ', res);
+    console.log("remove res ===> ", res);
     return res;
   } catch (e) {
     console.log(e);
