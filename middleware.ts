@@ -7,7 +7,6 @@ export default withAuth(
     const token = req.nextauth.token;
 
     const { pathname } = req.nextUrl;
-    console.log("toke ", token);
     if (token?.data) {
       if (PUBLIC_ROUTE.includes(pathname) || !PAGE_ROUTE.includes(pathname)) {
         return NextResponse.redirect(new URL("/Main", req.url));

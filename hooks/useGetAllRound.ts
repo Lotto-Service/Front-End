@@ -7,10 +7,11 @@ const useGetAllRound = (param: RoundsType) => {
   const { data, error, isLoading, refetch } = useQuery({
     queryKey: ["Round", param],
     queryFn: () => getAllRoundInfo(param),
+    enabled: !!param.token,
   });
 
   return {
-    data,
+    data: data?.data?.data,
     error,
     isLoading,
     refetch,

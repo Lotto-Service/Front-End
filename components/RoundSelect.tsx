@@ -17,8 +17,8 @@ export default function RoundSelect() {
         </SelectTrigger>
         <SelectContent className="border-main text-main font-semibold text-center">
           {Array.from({ length: 5 }, (_, i) => (
-            <SelectItem key={i} value={`${i + 1}`} className="text-[20px]">
-              {i + 1}
+            <SelectItem key={i} value={`${i}`} className="text-[20px]">
+              {i}
             </SelectItem>
           ))}
         </SelectContent>

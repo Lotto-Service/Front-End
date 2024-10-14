@@ -8,10 +8,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import useGetAllRound from "@/hooks/useGetAllRound";
 import { toast } from "@/hooks/useToast";
-import axios from "axios";
 import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 interface lottoType {
   title?: string;
@@ -27,20 +27,14 @@ export default function Main() {
   const [count, setCount] = useState(1);
 
   const { data } = useSession();
+  const {
+    data: roundData,
+    error,
+    isLoading,
+    refetch,
+  } = useGetAllRound({ token: data?.accessToken || "" });
 
-  // const getData = async () => {
-  //   const res = await axios.get(`/rounds?size=1&page=1`, {
-  //     headers: {
-  //       Authorization: `Bearer ${data?.accessToken}`,
-  //     },
-  //   });
-  //   console.log("res", res.data);
-  // };
-
-  // useEffect(() => {
-  //   getData();
-  // }, [data?.accessToken]);
-
+  console.log(roundData);
   const checkNum = (index: number) => {
     const count = lottoNums.filter((v) => v).length;
     setLottoNums((prevState) =>
@@ -130,7 +124,9 @@ export default function Main() {
         <RoundSelect />
       </div>
       <div className="w-full text-center mt-[50px]">
-        <p className="font-bold text-4xl text-main">제 1127회차</p>
+        <p className="font-bold text-4xl text-main">
+          제 {roundData?.totalElements}회차
+        </p>
         <p className="font-semibold text-4xl text-sub2 mt-[20px]">
           로또 번호 추출
         </p>

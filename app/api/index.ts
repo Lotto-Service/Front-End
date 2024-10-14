@@ -9,8 +9,6 @@ export const instance = axios.create({
 
 export const get = async (props: CommonApiType) => {
   const { url = "", token = "", headers = {}, params = {} } = props;
-  console.log("prama  ,,,,, ", props);
-  console.log(url, token);
   try {
     const result = await instance.get(url, {
       params,
@@ -20,7 +18,6 @@ export const get = async (props: CommonApiType) => {
       },
     });
     const res = result;
-    // console.log("get res ===>> ", res);
     return res;
   } catch (err) {
     console.log(err);
@@ -40,7 +37,6 @@ export const post = async (props: CommonApiType) => {
       },
     });
     const res = result;
-    console.log("post res ===> ", res);
     return res;
   } catch (err) {
     console.log(err);
@@ -60,7 +56,6 @@ export const patch = async (props: CommonApiType) => {
       },
     });
     const res = result;
-    console.log("patch res ===> ", res);
 
     return res;
   } catch (e) {
@@ -81,7 +76,6 @@ export const put = async (props: CommonApiType) => {
       },
     });
     const res = result;
-    console.log("put res ===> ", res);
 
     return res;
   } catch (e) {
@@ -102,7 +96,6 @@ export const remove = async (props: CommonApiType) => {
       },
     });
     const res = result;
-    console.log("remove res ===> ", res);
     return res;
   } catch (e) {
     console.log(e);
