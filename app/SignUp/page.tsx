@@ -112,6 +112,7 @@ export default function SignUp() {
         router.toLogin();
       }
     } catch (err: any) {
+      console.log("err ==> ", err);
       if (err.response.data.status === "CONFLICT") {
         setError("phoneNumber", {
           message: err?.response.data.message,

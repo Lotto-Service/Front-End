@@ -1,3 +1,4 @@
+"use client";
 import RoundSelect from "@/components/RoundSelect";
 import React from "react";
 
@@ -22,7 +23,10 @@ export default function Numbers() {
         <hr className="my-2 border border-sub2" />
         <div>
           {Array.from({ length: 10 }, (_, i) => (
-            <div className="flex items-center mt-5 border border-sub2 p-1 rounded-[5px]">
+            <div
+              key={i}
+              className="flex items-center mt-5 border border-sub2 p-1 rounded-[5px]"
+            >
               <div className="w-[10%] text-2xl text-sub2 font-semibold text-center border-r-2 border-sub2">
                 {i + 1}
               </div>
@@ -31,7 +35,10 @@ export default function Numbers() {
               </div>
               <div className="w-[70%] text-2xl font-semibold text-center flex justify-around">
                 {Array.from({ length: 6 }, (_, j) => (
-                  <span className="rounded-full bg-main-20 w-[40px] h-[40px] flex items-center justify-center">
+                  <span
+                    key={j}
+                    className="rounded-full bg-main-20 w-[40px] h-[40px] flex items-center justify-center"
+                  >
                     2
                   </span>
                 ))}

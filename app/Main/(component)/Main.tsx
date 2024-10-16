@@ -8,10 +8,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import useGetAllRound from "@/hooks/useGetAllRound";
 import { toast } from "@/hooks/useToast";
-import { useSession } from "next-auth/react";
-import { useState } from "react";
+import useRoundStore from "@/store/round";
+import { useEffect, useState } from "react";
 
 interface lottoType {
   title?: string;
@@ -25,16 +24,8 @@ export default function Main() {
   const [lottoMixtures, setLottoMixtures] = useState<lottoType[]>([]);
   const [autoState, setAutoState] = useState(false);
   const [count, setCount] = useState(1);
+  const { round, selectedRound } = useRoundStore();
 
-  const { data } = useSession();
-  const {
-    data: roundData,
-    error,
-    isLoading,
-    refetch,
-  } = useGetAllRound({ token: data?.accessToken || "" });
-
-  console.log(roundData);
   const checkNum = (index: number) => {
     const count = lottoNums.filter((v) => v).length;
     setLottoNums((prevState) =>
@@ -118,29 +109,31 @@ export default function Main() {
     tmp.splice(index, 1);
     setLottoMixtures([...tmp]);
   };
+  useEffect(() => {
+    console.log(round, selectedRound);
+  }, [round, selectedRound]);
   return (
     <div className="min-h-[900px] bg-background relative mt-[120px]">
       <div className="w-full flex justify-end pr-5">
         <RoundSelect />
       </div>
-      <div className="w-full text-center mt-[50px]">
-        <p className="font-bold text-4xl text-main">
-          제 {roundData?.totalElements}회차
-        </p>
-        <p className="font-semibold text-4xl text-sub2 mt-[20px]">
-          로또 번호 추출
-        </p>
-        <div className="w-[80%] m-auto mt-10">
-          <div className="flex justify-start">
-            <Button
-              className="bg-sub text-xl font-semibold px-8 hover:bg-sub-80"
-              onClick={resetLotto}
-            >
-              초기화
-            </Button>
-          </div>
-          <div
-            className="mt-5 
+      {round === selectedRound ? (
+        <div className="w-full text-center mt-[50px]">
+          <p className="font-bold text-4xl text-main">제 {round}회차</p>
+          <p className="font-semibold text-4xl text-sub2 mt-[20px]">
+            로또 번호 추출
+          </p>
+          <div className="w-[80%] m-auto mt-10">
+            <div className="flex justify-start">
+              <Button
+                className="bg-sub text-xl font-semibold px-8 hover:bg-sub-80"
+                onClick={resetLotto}
+              >
+                초기화
+              </Button>
+            </div>
+            <div
+              className="mt-5 
               w-[100%] 
               min-h-96 
               border 
@@ -151,101 +144,104 @@ export default function Main() {
               justify-center 
               items-center 
               flex-wrap"
-          >
-            {lottoNums.map((v, i) => (
-              <div className="sm:w-[20%] md:w-[11%] h-16 text-center" key={i}>
-                <p className="font-semibold">{i + 1}</p>
-                <Button
-                  className={`w-1 
+            >
+              {lottoNums.map((v, i) => (
+                <div className="sm:w-[20%] md:w-[11%] h-16 text-center" key={i}>
+                  <p className="font-semibold">{i + 1}</p>
+                  <Button
+                    className={`w-1 
                     h-8 
                     rounded-full 
                     ${v ? "bg-main-40" : "bg-white border-main"}
                     border 
                     hover:bg-main`}
-                  onClick={() => checkNum(i)}
-                ></Button>
-              </div>
-            ))}
-          </div>
-        </div>
-        <div className="w-[80%] m-auto mt-5 flex justify-between">
-          <div className="flex">
-            <Select onValueChange={(val) => setCount(+val)}>
-              <SelectTrigger className="w-[180px] border-main text-main font-semibold text-[20px]">
-                <SelectValue placeholder="1" />
-              </SelectTrigger>
-              <SelectContent className="border-main text-main font-semibold text-center">
-                {Array.from({ length: 5 }, (_, i) => (
-                  <SelectItem
-                    key={i}
-                    value={`${i + 1}`}
-                    className="text-[20px]"
-                  >
-                    {i + 1}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Button
-              className={`w-[180px] ml-2 border-main border ${
-                autoState ? "bg-main text-white" : "bg-white text-main"
-              } hover:bg-main60 font-semibold text-[20px]`}
-              onClick={() => setAutoState(() => !autoState)}
-            >
-              자동
-            </Button>
-          </div>
-          <div>
-            <Button
-              className="w-[180px] bg-main hover:bg-main-60 text-white font-semibold text-[20px]"
-              onClick={addLottoNums}
-            >
-              확인
-            </Button>
-          </div>
-        </div>
-        <div className="mt-20 mb-52">
-          <div className="w-[80%] m-auto">
-            <hr className="border-sub2 border" />
-            <div className="my-10">
-              {Array.from({ length: 5 }, (_, index) => index).map((num) => (
-                <div className="my-10" key={num}>
-                  <div className="flex justify-between w-[100%] items-center">
-                    <span className="w-[20%] text-[30px] text-main text-left">
-                      {String.fromCharCode(num + 65)}{" "}
-                      {lottoMixtures[num]?.title}
-                    </span>
-                    <div className="flex w-[70%] justify-around text-[30px]">
-                      {lottoMixtures[num]?.nums?.map((num, j) => (
-                        <span
-                          className="w-[50px] h-[50px] bg-main-20 flex justify-center items-center rounded-full"
-                          key={j}
-                        >
-                          {num}
-                        </span>
-                      ))}
-                    </div>
-                    <Button
-                      variant="delete"
-                      className="border-delete border bg-white text-delete font-semibold"
-                      onClick={() => removeLotto(num)}
-                      disabled={!lottoMixtures[num]}
-                    >
-                      제거
-                    </Button>
-                  </div>
+                    onClick={() => checkNum(i)}
+                  ></Button>
                 </div>
               ))}
             </div>
-            <hr className="border-sub2 border" />
           </div>
-          <div className="mt-[50px]">
-            <Button className="w-[180px] bg-main hover:bg-main-60 font-semibold text-[20px]">
-              저장
-            </Button>
+          <div className="w-[80%] m-auto mt-5 flex justify-between">
+            <div className="flex">
+              <Select onValueChange={(val) => setCount(+val)}>
+                <SelectTrigger className="w-[180px] border-main text-main font-semibold text-[20px]">
+                  <SelectValue placeholder="1" />
+                </SelectTrigger>
+                <SelectContent className="border-main text-main font-semibold text-center">
+                  {Array.from({ length: 5 }, (_, i) => (
+                    <SelectItem
+                      key={i}
+                      value={`${i + 1}`}
+                      className="text-[20px]"
+                    >
+                      {i + 1}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Button
+                className={`w-[180px] ml-2 border-main border ${
+                  autoState ? "bg-main text-white" : "bg-white text-main"
+                } hover:bg-main60 font-semibold text-[20px]`}
+                onClick={() => setAutoState(() => !autoState)}
+              >
+                자동
+              </Button>
+            </div>
+            <div>
+              <Button
+                className="w-[180px] bg-main hover:bg-main-60 text-white font-semibold text-[20px]"
+                onClick={addLottoNums}
+              >
+                확인
+              </Button>
+            </div>
+          </div>
+          <div className="mt-20 mb-52">
+            <div className="w-[80%] m-auto">
+              <hr className="border-sub2 border" />
+              <div className="my-10">
+                {Array.from({ length: 5 }, (_, index) => index).map((num) => (
+                  <div className="my-10" key={num}>
+                    <div className="flex justify-between w-[100%] items-center">
+                      <span className="w-[20%] text-[30px] text-main text-left">
+                        {String.fromCharCode(num + 65)}{" "}
+                        {lottoMixtures[num]?.title}
+                      </span>
+                      <div className="flex w-[70%] justify-around text-[30px]">
+                        {lottoMixtures[num]?.nums?.map((num, j) => (
+                          <span
+                            className="w-[50px] h-[50px] bg-main-20 flex justify-center items-center rounded-full"
+                            key={j}
+                          >
+                            {num}
+                          </span>
+                        ))}
+                      </div>
+                      <Button
+                        variant="delete"
+                        className="border-delete border bg-white text-delete font-semibold"
+                        onClick={() => removeLotto(num)}
+                        disabled={!lottoMixtures[num]}
+                      >
+                        제거
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <hr className="border-sub2 border" />
+            </div>
+            <div className="mt-[50px]">
+              <Button className="w-[180px] bg-main hover:bg-main-60 font-semibold text-[20px]">
+                저장
+              </Button>
+            </div>
           </div>
         </div>
-      </div>
+      ) : (
+        <div>다름</div>
+      )}
     </div>
   );
 }

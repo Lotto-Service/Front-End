@@ -25,3 +25,10 @@ export interface RoundsType {
   page?: number;
   token: string;
 }
+
+export interface RoundStore {
+  round: number;
+  setRound: (newRound: number) => void;
+  selectedRound: number;
+  setSelectedRound: (newRound: number) => void;
+}
