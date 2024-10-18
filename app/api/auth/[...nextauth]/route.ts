@@ -1,3 +1,4 @@
+import { SignUpType } from "@/utils/type";
 import axios from "axios";
 import NextAuth, { NextAuthOptions, Session } from "next-auth";
 import { JWT } from "next-auth/jwt";
@@ -10,13 +11,30 @@ export const nextAuthOptions: NextAuthOptions = {
       credentials: {
         username: { type: "username" },
         password: { type: "password" },
+        checkPw: { type: "checkPw" },
+        email: { type: "email" },
+        birth: { type: "birth" },
+        phoneNumber: { type: "phoneNumber" },
       },
       async authorize(credentials, req) {
         try {
           const params = {
-            username: credentials?.username || "",
+            username: credentials?.username,
             password: credentials?.password,
+            checkPw: credentials?.checkPw,
+            email: credentials?.email,
+            birth: credentials?.birth,
+            phoneNumber: credentials?.phoneNumber,
           };
+          // 회원가입
+          if (params.email) {
+            const res = await axios.post(
+              `${process.env.NEXT_PUBLIC_API_URL}/users`,
+              params
+            );
+            return res.data;
+          }
+          // 로그인
           const res = await axios.post(
             `${process.env.NEXT_PUBLIC_API_URL}/users/authenticate`,
             params
@@ -31,6 +49,7 @@ export const nextAuthOptions: NextAuthOptions = {
       },
     }),
   ],
+
   callbacks: {
     // async signIn({ user, account, profile, email, credentials }) {
     //   return true;
@@ -88,7 +107,9 @@ export const nextAuthOptions: NextAuthOptions = {
   },
   session: {
     strategy: "jwt",
-    maxAge: 5 * 60 * 60 * 30,
+    maxAge: 30 * 60 * 60 * 24, // 30일
+    // maxAge: 20,
+    updateAge: 24 * 60 * 60,
   },
   events: {
     // 사용자가 로그인 했을 때

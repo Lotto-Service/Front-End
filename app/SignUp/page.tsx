@@ -8,7 +8,6 @@ import { useEffect } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useToast } from "@/hooks/useToast";
 import axios from "axios";
-import UserApi from "../api/User/UserApi";
 
 export default function SignUp() {
   const {

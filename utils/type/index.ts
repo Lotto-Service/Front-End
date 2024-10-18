@@ -23,7 +23,7 @@ export interface CommonApiType {
 export interface RoundsType {
   size?: number;
   page?: number;
-  token: string;
+  token?: string;
 }
 
 export interface RoundStore {

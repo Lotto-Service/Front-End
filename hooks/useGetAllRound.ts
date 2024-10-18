@@ -1,13 +1,15 @@
-import RoundApi from "@/app/api/Round/RoundApi";
+import RoundApi from "@/app/api/Lotto/RoundApi";
 import { RoundsType } from "@/utils/type";
-import { QueryClient, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 
-const useGetAllRound = (param: RoundsType) => {
+const useGetAllRound = (
+  params: RoundsType = { size: 1, page: 1, token: "" }
+) => {
   const { getAllRoundInfo } = RoundApi;
   const { data, error, isLoading, refetch } = useQuery({
-    queryKey: ["Round", param],
-    queryFn: () => getAllRoundInfo(param),
-    enabled: !!param.token,
+    queryKey: ["AllRound", params],
+    queryFn: () => getAllRoundInfo(params),
+    enabled: !!params.token,
   });
 
   return {

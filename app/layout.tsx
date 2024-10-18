@@ -22,17 +22,17 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <SessionProvider>
-          <AuthProvider>
-            <QueryProvider>
+        <QueryProvider>
+          <SessionProvider>
+            <AuthProvider>
               <header className="relative">
                 <Navbar />
               </header>
               {children}
               <Toaster />
-            </QueryProvider>
-          </AuthProvider>
-        </SessionProvider>
+            </AuthProvider>
+          </SessionProvider>
+        </QueryProvider>
       </body>
     </html>
   );

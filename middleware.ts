@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { PAGE_ROUTE, PRIVATE_ROUTE, PUBLIC_ROUTE } from "./route";
+import { PAGE_ROUTE, PUBLIC_ROUTE } from "./route";
 import { withAuth } from "next-auth/middleware";
 
 export default withAuth(

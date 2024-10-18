@@ -8,8 +8,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import useGetRound from "@/hooks/useGetRound";
 import { toast } from "@/hooks/useToast";
 import useRoundStore from "@/store/round";
+import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 
 interface lottoType {
@@ -25,6 +27,13 @@ export default function Main() {
   const [autoState, setAutoState] = useState(false);
   const [count, setCount] = useState(1);
   const { round, selectedRound } = useRoundStore();
+  const {
+    data: roundData,
+    error,
+    isLoading,
+    refetch,
+  } = useGetRound(selectedRound);
+  const { data: session } = useSession();
 
   const checkNum = (index: number) => {
     const count = lottoNums.filter((v) => v).length;
@@ -105,13 +114,12 @@ export default function Main() {
   };
 
   const removeLotto = (index: number) => {
-    let tmp = lottoMixtures;
+    let tmp = [...lottoMixtures];
     tmp.splice(index, 1);
     setLottoMixtures([...tmp]);
   };
-  useEffect(() => {
-    console.log(round, selectedRound);
-  }, [round, selectedRound]);
+
+  const saveLotto = async () => {};
   return (
     <div className="min-h-[900px] bg-background relative mt-[120px]">
       <div className="w-full flex justify-end pr-5">
@@ -233,7 +241,10 @@ export default function Main() {
               <hr className="border-sub2 border" />
             </div>
             <div className="mt-[50px]">
-              <Button className="w-[180px] bg-main hover:bg-main-60 font-semibold text-[20px]">
+              <Button
+                className="w-[180px] bg-main hover:bg-main-60 font-semibold text-[20px]"
+                onClick={saveLotto}
+              >
                 저장
               </Button>
             </div>

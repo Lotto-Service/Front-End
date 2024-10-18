@@ -1,5 +1,5 @@
 "use client";
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import IMAGES from "@/utils/image";
@@ -9,24 +9,15 @@ import useGetAllRound from "@/hooks/useGetAllRound";
 import useRoundStore from "@/store/round";
 
 export default function Navbar() {
-  const [id, setId] = useState(false);
   const { setRound, setSelectedRound } = useRoundStore();
   const router = useCommonRouter();
-  const { data } = useSession();
+  const { data: session } = useSession();
   const {
     data: roundData,
     error,
     isLoading,
     refetch,
-  } = useGetAllRound({ token: data?.accessToken || "" });
-
-  useEffect(() => {
-    if (data?.accessToken) {
-      setId(true);
-    } else {
-      setId(false);
-    }
-  }, [data]);
+  } = useGetAllRound({ token: session?.accessToken });
 
   useEffect(() => {
     if (!roundData) return;
@@ -48,7 +39,7 @@ export default function Navbar() {
 
   return (
     <div className="border-b border-gray-400 w-full h-[100px] flex justify-center items-center fixed bg-white top-0 z-10">
-      {id ? (
+      {session?.accessToken ? (
         <Fragment>
           <div className="flex fixed right-5 items-center">
             <div>
