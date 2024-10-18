@@ -1,5 +1,5 @@
-import { SignInType, SignUpType } from '@/utils/type';
-import { post } from '..';
+import { SignInType, SignUpType } from "@/utils/type";
+import { post } from ".";
 
 const NEXT_PUBLIC_API_URL = process.env.NEXT_PUBLIC_API_URL;
 

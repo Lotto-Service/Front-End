@@ -1,4 +1,5 @@
 "use client";
+import LottoApi from "@/app/api/LottoApi";
 import RoundSelect from "@/components/RoundSelect";
 import { Button } from "@/components/ui/button";
 import {
@@ -8,32 +9,39 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import useCreateLotto from "@/hooks/useCreateLotto";
 import useGetRound from "@/hooks/useGetRound";
 import { toast } from "@/hooks/useToast";
 import useRoundStore from "@/store/round";
-import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
+import { LottoType } from "@/utils/type";
+import { useState } from "react";
 
-interface lottoType {
-  title?: string;
-  nums?: number[];
-}
+// interface lottoType {
+//   title?: string;
+//   nums?: number[];
+// }
 
 export default function Main() {
   const [lottoNums, setLottoNums] = useState(
     Array.from({ length: 45 }, (_, i) => false)
   );
-  const [lottoMixtures, setLottoMixtures] = useState<lottoType[]>([]);
+  const [lottoMixtures, setLottoMixtures] = useState<LottoType[]>([]);
   const [autoState, setAutoState] = useState(false);
   const [count, setCount] = useState(1);
   const { round, selectedRound } = useRoundStore();
+  const { createLotto } = LottoApi;
   const {
     data: roundData,
     error,
     isLoading,
     refetch,
   } = useGetRound(selectedRound);
-  const { data: session } = useSession();
+
+  const autoType: Record<string, string> = {
+    자동: "AUTO",
+    수동: "PASSIVITY",
+    반자동: "SEMI_AUTO",
+  };
 
   const checkNum = (index: number) => {
     const count = lottoNums.filter((v) => v).length;
@@ -104,7 +112,12 @@ export default function Main() {
       tempNums.sort((a, b) => a - b);
       setLottoMixtures((prevState) => [
         ...prevState,
-        { nums: tempNums, title },
+        {
+          numList: tempNums,
+          isAutoStr: title,
+          isAuto: autoType[title],
+          drawNo: round,
+        },
       ]);
     }
   };
@@ -119,7 +132,15 @@ export default function Main() {
     setLottoMixtures([...tmp]);
   };
 
-  const saveLotto = async () => {};
+  const saveLotto = async () => {
+    console.log("lottomixtures", lottoMixtures);
+    try {
+      const res = await createLotto(lottoMixtures);
+      console.log("res ", res);
+    } catch (err) {
+      console.log(err);
+    }
+  };
   return (
     <div className="min-h-[900px] bg-background relative mt-[120px]">
       <div className="w-full flex justify-end pr-5">
@@ -214,10 +235,10 @@ export default function Main() {
                     <div className="flex justify-between w-[100%] items-center">
                       <span className="w-[20%] text-[30px] text-main text-left">
                         {String.fromCharCode(num + 65)}{" "}
-                        {lottoMixtures[num]?.title}
+                        {lottoMixtures[num]?.isAutoStr}
                       </span>
                       <div className="flex w-[70%] justify-around text-[30px]">
-                        {lottoMixtures[num]?.nums?.map((num, j) => (
+                        {lottoMixtures[num]?.numList?.map((num, j) => (
                           <span
                             className="w-[50px] h-[50px] bg-main-20 flex justify-center items-center rounded-full"
                             key={j}
@@ -244,6 +265,7 @@ export default function Main() {
               <Button
                 className="w-[180px] bg-main hover:bg-main-60 font-semibold text-[20px]"
                 onClick={saveLotto}
+                disabled={lottoMixtures.length === 0}
               >
                 저장
               </Button>

@@ -1,5 +1,5 @@
-import { RoundsType } from "@/utils/type";
-import { get, put } from "..";
+import { LottoType, RoundsType } from "@/utils/type";
+import { get, post, put } from ".";
 
 async function getAllRoundInfo(params: RoundsType) {
   const { size = 1, page = 1 } = params;
@@ -14,9 +14,16 @@ async function getRoundInfo(num: number) {
   return put({ url });
 }
 
-const RoundApi = {
+async function createLotto(body: LottoType[]) {
+  const url = "/lotto-tickets";
+
+  return post({ url, body });
+}
+
+const LottoApi = {
   getAllRoundInfo,
   getRoundInfo,
+  createLotto,
 };
 
-export default RoundApi;
+export default LottoApi;

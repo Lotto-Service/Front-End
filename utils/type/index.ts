@@ -32,3 +32,10 @@ export interface RoundStore {
   selectedRound: number;
   setSelectedRound: (newRound: number) => void;
 }
+
+export interface LottoType {
+  drawNo?: number;
+  numList: Array<number>;
+  isAuto: string;
+  isAutoStr?: string;
+}

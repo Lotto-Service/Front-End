@@ -1,8 +1,8 @@
-import RoundApi from "@/app/api/Lotto/RoundApi";
+import LottoApi from "@/app/api/LottoApi";
 import { useQuery } from "@tanstack/react-query";
 
 const useGetRound = (num: number) => {
-  const { getRoundInfo } = RoundApi;
+  const { getRoundInfo } = LottoApi;
 
   const { data, error, isLoading, refetch } = useQuery({
     queryKey: ["Round", num],
