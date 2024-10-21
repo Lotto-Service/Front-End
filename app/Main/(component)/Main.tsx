@@ -9,7 +9,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import useCreateLotto from "@/hooks/useCreateLotto";
 import useGetRound from "@/hooks/useGetRound";
 import { toast } from "@/hooks/useToast";
 import useRoundStore from "@/store/round";
@@ -36,7 +35,7 @@ export default function Main() {
     isLoading,
     refetch,
   } = useGetRound(selectedRound);
-
+  console.log(roundData);
   const autoType: Record<string, string> = {
     자동: "AUTO",
     수동: "PASSIVITY",
@@ -146,9 +145,11 @@ export default function Main() {
       <div className="w-full flex justify-end pr-5">
         <RoundSelect />
       </div>
+      <p className="font-bold text-center text-4xl text-main mt-[50px]">
+        제 {selectedRound}회차
+      </p>
       {round === selectedRound ? (
-        <div className="w-full text-center mt-[50px]">
-          <p className="font-bold text-4xl text-main">제 {round}회차</p>
+        <div className="w-full text-center ">
           <p className="font-semibold text-4xl text-sub2 mt-[20px]">
             로또 번호 추출
           </p>
@@ -273,7 +274,32 @@ export default function Main() {
           </div>
         </div>
       ) : (
-        <div>다름</div>
+        <div className="text-center">
+          <p className="font-semibold text-4xl text-sub2 mt-[20px]">
+            당첨 번호
+          </p>
+          <div className="mt-[80px]">
+            {Array.from({ length: 6 }, (_, i) => (
+              <span className="text-3xl mx-3" key={i}>
+                {roundData?.data?.[`drwtNo${i + 1}`]}
+              </span>
+            ))}
+          </div>
+          <div className="mt-[80px] text-sub2 font-semibold text-4xl">
+            당첨 금액
+          </div>
+          <div className="mt-[80px] text-sub2 font-semibold text-4xl">
+            <p>
+              총 당첨액: {roundData?.data?.firstAccumamnt?.toLocaleString()}원
+            </p>
+            <p className="pt-5">
+              1등 당첨자: {roundData?.data?.firstPrzwnerCo}명
+            </p>
+            <p className="pt-5">
+              1등 당첨금: {roundData?.data?.firstWinamnt?.toLocaleString()}원
+            </p>
+          </div>
+        </div>
       )}
     </div>
   );
