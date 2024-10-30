@@ -22,7 +22,6 @@ export default function SignIn() {
   const toSignUp = () => {
     router.toSignUp();
   };
-// 
   const onSubmit: SubmitHandler<SignInType> = async (data) => {
     const res = await signIn("credentials", {
       username: data.username,
