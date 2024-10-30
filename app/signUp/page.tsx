@@ -23,7 +23,7 @@ export default function SignUp() {
 
   const pw = watch("password");
   const checkPw = watch("checkPw");
-
+  //
   useEffect(() => {
     if (pw && checkPw && pw !== checkPw) {
       setError("checkPw", { message: "비밀번호가 불일치합니다." });

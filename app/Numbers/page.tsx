@@ -20,6 +20,7 @@ export default function Numbers() {
             번호
           </div>
         </div>
+        {/*  */}
         <hr className="my-2 border border-sub2" />
         <div>
           {Array.from({ length: 10 }, (_, i) => (
