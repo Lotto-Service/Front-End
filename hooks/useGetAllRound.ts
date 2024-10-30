@@ -1,11 +1,10 @@
-import LottoApi from "@/app/api/LottoApi";
+import LottoApi from "@/app/api/lottoApi";
 import { RoundsType } from "@/utils/type";
-import { useQuery } from "@tanstack/react-query";
+import { QueryClient, useQuery } from "@tanstack/react-query";
 
-const useGetAllRound = (
-  params: RoundsType = { size: 1, page: 1, token: "" }
-) => {
-  const { getAllRoundInfo } = LottoApi;
+const { getAllRoundInfo } = LottoApi;
+
+export function useGetAllRound(params: RoundsType = { size: 1, page: 1 }) {
   const { data, error, isLoading, refetch } = useQuery({
     queryKey: ["AllRound", params],
     queryFn: () => getAllRoundInfo(params),
@@ -18,6 +17,17 @@ const useGetAllRound = (
     isLoading,
     refetch,
   };
-};
+}
 
-export default useGetAllRound;
+export async function usePreGetAllRound(
+  queryClient: QueryClient,
+  params: RoundsType = {
+    size: 1,
+    page: 1,
+  }
+) {
+  await queryClient.prefetchQuery({
+    queryKey: ["AllRound", params],
+    queryFn: () => getAllRoundInfo(params),
+  });
+}

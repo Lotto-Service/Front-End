@@ -1,4 +1,4 @@
-import LottoApi from "@/app/api/LottoApi";
+import LottoApi from "@/app/api/lottoApi";
 import { useQuery } from "@tanstack/react-query";
 
 const useGetRound = (num: number) => {

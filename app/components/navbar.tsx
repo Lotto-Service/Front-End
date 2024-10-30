@@ -5,28 +5,19 @@ import Image from "next/image";
 import IMAGES from "@/utils/image";
 import useCommonRouter from "@/hooks/useCommonRouter";
 import { signOut, useSession } from "next-auth/react";
-import useGetAllRound from "@/hooks/useGetAllRound";
 import useRoundStore from "@/store/round";
+import { useGetAllRound } from "@/hooks/useGetAllRound";
 
 export default function Navbar() {
   const { setRound, setSelectedRound } = useRoundStore();
   const router = useCommonRouter();
   const { data: session } = useSession();
-  const {
-    data: roundData,
-    error,
-    isLoading,
-    refetch,
-  } = useGetAllRound({ token: session?.accessToken });
+  const { data: allRound, error, isLoading, refetch } = useGetAllRound();
 
-  useEffect(() => {
-    if (!roundData) return;
-    setRound(roundData.totalElements);
-    setSelectedRound(roundData.totalElements);
-  }, [roundData]);
-
+  console.log("allRound ", allRound);
   const logout = () => {
     signOut();
+    router.toLogin();
   };
 
   const toMain = () => {

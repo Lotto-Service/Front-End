@@ -2,7 +2,7 @@ import { LottoType, RoundsType } from "@/utils/type";
 import { get, post, put } from ".";
 
 async function getAllRoundInfo(params: RoundsType) {
-  const { size = 1, page = 1 } = params;
+  const { size, page } = params;
   const url = `/rounds?size=${size}&page=${page}`;
 
   return get({ url });

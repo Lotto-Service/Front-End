@@ -1,4 +1,3 @@
-import { SignUpType } from "@/utils/type";
 import axios from "axios";
 import NextAuth, { NextAuthOptions, Session } from "next-auth";
 import { JWT } from "next-auth/jwt";

@@ -1,19 +1,19 @@
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
 
 export default function useCommonRouter() {
   const router = useRouter();
 
   const toMain = () => {
-    router.push('/Main');
+    router.push("/main");
   };
   const toNumbers = () => {
-    router.push('/Numbers');
+    router.push("/numbers");
   };
   const toLogin = () => {
-    router.push('/');
+    router.push("/signIn");
   };
   const toSignUp = () => {
-    router.push('/SignUp');
+    router.push("/signUp");
   };
 
   return {
